@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using WebServiceAutomation.Model;
 using Xunit;
 
 namespace WebServiceAutomation.GetEndPoint
@@ -214,6 +215,9 @@ namespace WebServiceAutomation.GetEndPoint
                         Task<string> responseData = responseContent.ReadAsStringAsync();
                         string data = responseData.Result;
                         Console.WriteLine(data);
+
+                        RestResponse restResponse = new RestResponse((int)statuscode, responseData.Result);
+                        Console.WriteLine(restResponse.ToString());
                     }
                 }
             }

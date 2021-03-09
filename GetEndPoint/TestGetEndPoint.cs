@@ -1,11 +1,14 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using WebServiceAutomation.Model;
+using WebServiceAutomation.Model.JsonModel;
 using Xunit;
 
 namespace WebServiceAutomation.GetEndPoint
@@ -222,6 +225,46 @@ namespace WebServiceAutomation.GetEndPoint
                 }
             }
              
+        }
+
+        [Fact]
+        public void TestDeserilizationOfJsonObject()
+        {
+            using (HttpClient httpClient = new HttpClient())
+            {
+                using (HttpRequestMessage httpRequestMessage = new HttpRequestMessage())
+                {
+                    httpRequestMessage.RequestUri = new Uri(getUrl);
+                    httpRequestMessage.Method = HttpMethod.Get;
+                    httpRequestMessage.Headers.Add("Accept", "application/json");
+
+                    Task<HttpResponseMessage> httpResponse = httpClient.SendAsync(httpRequestMessage);
+
+                    using (HttpResponseMessage HttpResponseMessage = httpResponse.Result)
+                    {
+                        Console.WriteLine(HttpResponseMessage.ToString());
+
+                        //Status Code
+                        HttpStatusCode statuscode = HttpResponseMessage.StatusCode;
+                        Console.WriteLine("Status Code " + statuscode);
+                        Console.WriteLine("Status Code " + (int)statuscode);
+
+                        //Response Data
+                        HttpContent responseContent = HttpResponseMessage.Content;
+                        Task<string> responseData = responseContent.ReadAsStringAsync();
+                        string data = responseData.Result;
+                        Console.WriteLine(data);
+
+                        RestResponse restResponse = new RestResponse((int)statuscode, responseData.Result);
+                        //Console.WriteLine(restResponse.ToString());
+
+                        //Deserialization of JSON Response
+                        List<JsonRootObject> jsonRootObject = JsonConvert.DeserializeObject<List<JsonRootObject>>(restResponse.responseContent);
+                        Console.WriteLine(jsonRootObject[0].ToString());
+
+                    }
+                }
+            }
         }
     }
 }

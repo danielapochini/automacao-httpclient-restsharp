@@ -13,12 +13,20 @@ using WebServiceAutomation.Model;
 using WebServiceAutomation.Model.JsonModel;
 using WebServiceAutomation.Model.XmlModel;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace WebServiceAutomation.GetEndPoint
 {
 
     public class TestGetEndPoint
     {
+        private readonly ITestOutputHelper output;
+
+        public TestGetEndPoint(ITestOutputHelper output)
+        {
+            this.output = output;
+        }
+
         private string getUrl = "http://localhost:8080/laptop-bag/webapi/api/all";
 
         [Fact]
@@ -38,19 +46,19 @@ namespace WebServiceAutomation.GetEndPoint
             Uri getUri = new Uri(getUrl);
             Task<HttpResponseMessage> httpResponse  = httpClient.GetAsync(getUri);
             HttpResponseMessage HttpResponseMessage = httpResponse.Result;
-            Console.WriteLine(HttpResponseMessage.ToString());
+            output.WriteLine(HttpResponseMessage.ToString());
 
             //Status Code
             HttpStatusCode statuscode = HttpResponseMessage.StatusCode;
-            Console.WriteLine("Status Code " + statuscode);
-            Console.WriteLine("Status Code " + (int)statuscode);
+            output.WriteLine("Status Code " + statuscode);
+            output.WriteLine("Status Code " + (int)statuscode);
             httpClient.Dispose();
 
             //Response Data
             HttpContent responseContent = HttpResponseMessage.Content;
             Task<string> responseData = responseContent.ReadAsStringAsync();
             string data = responseData.Result;
-            Console.WriteLine(data);
+            output.WriteLine(data);
 
             //Close the connection
             httpClient.Dispose();
@@ -63,18 +71,18 @@ namespace WebServiceAutomation.GetEndPoint
             Uri getUri = new Uri(getUrl + "/random");
             Task<HttpResponseMessage> httpResponse = httpClient.GetAsync(getUri);
             HttpResponseMessage HttpResponseMessage = httpResponse.Result;
-            Console.WriteLine(HttpResponseMessage.ToString());
+            output.WriteLine(HttpResponseMessage.ToString());
 
             //Status Code 
             HttpStatusCode statuscode = HttpResponseMessage.StatusCode;
-            Console.WriteLine("Status Code " + statuscode);
-            Console.WriteLine("Status Code " + (int)statuscode);
+            output.WriteLine("Status Code " + statuscode);
+            output.WriteLine("Status Code " + (int)statuscode);
 
             //Response Data
             HttpContent responseContent = HttpResponseMessage.Content;
             Task<string> responseData = responseContent.ReadAsStringAsync();
             string data = responseData.Result;
-            Console.WriteLine(data);
+            output.WriteLine(data);
 
             //Close the connection
             httpClient.Dispose();
@@ -90,18 +98,18 @@ namespace WebServiceAutomation.GetEndPoint
 
             Task<HttpResponseMessage> httpResponse = httpClient.GetAsync(getUrl);
             HttpResponseMessage HttpResponseMessage = httpResponse.Result;
-            Console.WriteLine(HttpResponseMessage.ToString());
+            output.WriteLine(HttpResponseMessage.ToString());
 
             //Status Code
             HttpStatusCode statuscode = HttpResponseMessage.StatusCode;
-            Console.WriteLine("Status Code " + statuscode);
-            Console.WriteLine("Status Code " + (int)statuscode);
+            output.WriteLine("Status Code " + statuscode);
+            output.WriteLine("Status Code " + (int)statuscode);
 
             //Response Data
             HttpContent responseContent = HttpResponseMessage.Content;
             Task<string> responseData = responseContent.ReadAsStringAsync();
             string data = responseData.Result;
-            Console.WriteLine(data);
+            output.WriteLine(data);
 
             //Close the connection
             httpClient.Dispose();
@@ -118,18 +126,18 @@ namespace WebServiceAutomation.GetEndPoint
 
             Task<HttpResponseMessage> httpResponse = httpClient.GetAsync(getUrl);
             HttpResponseMessage HttpResponseMessage = httpResponse.Result;
-            Console.WriteLine(HttpResponseMessage.ToString());
+            output.WriteLine(HttpResponseMessage.ToString());
 
             //Status Code
             HttpStatusCode statuscode = HttpResponseMessage.StatusCode;
-            Console.WriteLine("Status Code " + statuscode);
-            Console.WriteLine("Status Code " + (int)statuscode);
+            output.WriteLine("Status Code " + statuscode);
+            output.WriteLine("Status Code " + (int)statuscode);
 
             //Response Data
             HttpContent responseContent = HttpResponseMessage.Content;
             Task<string> responseData = responseContent.ReadAsStringAsync();
             string data = responseData.Result;
-            Console.WriteLine(data);
+            output.WriteLine(data);
 
             //Close the connection
             httpClient.Dispose();
@@ -147,18 +155,18 @@ namespace WebServiceAutomation.GetEndPoint
 
             Task<HttpResponseMessage> httpResponse = httpClient.GetAsync(getUrl);
             HttpResponseMessage HttpResponseMessage = httpResponse.Result;
-            Console.WriteLine(HttpResponseMessage.ToString());
+            output.WriteLine(HttpResponseMessage.ToString());
 
             //Status Code
             HttpStatusCode statuscode = HttpResponseMessage.StatusCode;
-            Console.WriteLine("Status Code " + statuscode);
-            Console.WriteLine("Status Code " + (int)statuscode);
+            output.WriteLine("Status Code " + statuscode);
+            output.WriteLine("Status Code " + (int)statuscode);
 
             //Response Data
             HttpContent responseContent = HttpResponseMessage.Content;
             Task<string> responseData = responseContent.ReadAsStringAsync();
             string data = responseData.Result;
-            Console.WriteLine(data);
+            output.WriteLine(data);
 
             //Close the connection
             httpClient.Dispose();
@@ -176,18 +184,18 @@ namespace WebServiceAutomation.GetEndPoint
             Task<HttpResponseMessage> httpResponse = httpClient.SendAsync(httpRequestMessage);
 
             HttpResponseMessage HttpResponseMessage = httpResponse.Result;
-            Console.WriteLine(HttpResponseMessage.ToString());
+            output.WriteLine(HttpResponseMessage.ToString());
 
             //Status Code
             HttpStatusCode statuscode = HttpResponseMessage.StatusCode;
-            Console.WriteLine("Status Code " + statuscode);
-            Console.WriteLine("Status Code " + (int)statuscode);
+            output.WriteLine("Status Code " + statuscode);
+            output.WriteLine("Status Code " + (int)statuscode);
 
             //Response Data
             HttpContent responseContent = HttpResponseMessage.Content;
             Task<string> responseData = responseContent.ReadAsStringAsync();
             string data = responseData.Result;
-            Console.WriteLine(data);
+            output.WriteLine(data);
 
             //Close the connection
             httpClient.Dispose();
@@ -209,21 +217,21 @@ namespace WebServiceAutomation.GetEndPoint
 
                     using (HttpResponseMessage HttpResponseMessage = httpResponse.Result)
                     {
-                        Console.WriteLine(HttpResponseMessage.ToString());
+                        output.WriteLine(HttpResponseMessage.ToString());
 
                         //Status Code
                         HttpStatusCode statuscode = HttpResponseMessage.StatusCode;
-                        Console.WriteLine("Status Code " + statuscode);
-                        Console.WriteLine("Status Code " + (int)statuscode);
+                        output.WriteLine("Status Code " + statuscode);
+                        output.WriteLine("Status Code " + (int)statuscode);
 
                         //Response Data
                         HttpContent responseContent = HttpResponseMessage.Content;
                         Task<string> responseData = responseContent.ReadAsStringAsync();
                         string data = responseData.Result;
-                        Console.WriteLine(data);
+                        output.WriteLine(data);
 
                         RestResponse restResponse = new RestResponse((int)statuscode, responseData.Result);
-                        Console.WriteLine(restResponse.ToString());
+                        output.WriteLine(restResponse.ToString());
                     }
                 }
             }
@@ -245,25 +253,25 @@ namespace WebServiceAutomation.GetEndPoint
 
                     using (HttpResponseMessage HttpResponseMessage = httpResponse.Result)
                     {
-                        Console.WriteLine(HttpResponseMessage.ToString());
+                        output.WriteLine(HttpResponseMessage.ToString());
 
                         //Status Code
                         HttpStatusCode statuscode = HttpResponseMessage.StatusCode;
-                        Console.WriteLine("Status Code " + statuscode);
-                        Console.WriteLine("Status Code " + (int)statuscode);
+                        output.WriteLine("Status Code " + statuscode);
+                        output.WriteLine("Status Code " + (int)statuscode);
 
                         //Response Data
                         HttpContent responseContent = HttpResponseMessage.Content;
                         Task<string> responseData = responseContent.ReadAsStringAsync();
                         string data = responseData.Result;
-                        Console.WriteLine(data);
+                        output.WriteLine(data);
 
                         RestResponse restResponse = new RestResponse((int)statuscode, responseData.Result);
-                        //Console.WriteLine(restResponse.ToString());
+                        //output.WriteLine(restResponse.ToString());
 
                         //Deserialization of JSON Response
                         List<JsonRootObject> jsonRootObject = JsonConvert.DeserializeObject<List<JsonRootObject>>(restResponse.responseContent);
-                        Console.WriteLine(jsonRootObject[0].ToString());
+                        output.WriteLine(jsonRootObject[0].ToString());
 
                     }
                 }
@@ -285,21 +293,21 @@ namespace WebServiceAutomation.GetEndPoint
 
                     using (HttpResponseMessage HttpResponseMessage = httpResponse.Result)
                     {
-                        Console.WriteLine(HttpResponseMessage.ToString());
+                        output.WriteLine(HttpResponseMessage.ToString());
 
                         //Status Code
                         HttpStatusCode statuscode = HttpResponseMessage.StatusCode;
-                        Console.WriteLine("Status Code " + statuscode);
-                        Console.WriteLine("Status Code " + (int)statuscode);
+                        output.WriteLine("Status Code " + statuscode);
+                        output.WriteLine("Status Code " + (int)statuscode);
 
                         //Response Data
                         HttpContent responseContent = HttpResponseMessage.Content;
                         Task<string> responseData = responseContent.ReadAsStringAsync();
                         string data = responseData.Result;
-                        Console.WriteLine(data);
+                        output.WriteLine(data);
 
                         RestResponse restResponse = new RestResponse((int)statuscode, responseData.Result);
-                        //Console.WriteLine(restResponse.ToString());
+                        //output.WriteLine(restResponse.ToString());
 
                         //Deserialization of XML Response
                         XmlSerializer xmlSerializer = new XmlSerializer(typeof(LaptopDetailss));
@@ -307,7 +315,8 @@ namespace WebServiceAutomation.GetEndPoint
                         TextReader textReader = new StringReader(restResponse.responseContent);
 
                         LaptopDetailss xmlData = (LaptopDetailss)xmlSerializer.Deserialize(textReader);
-                        Console.WriteLine(xmlData.ToString());
+                        output.WriteLine(xmlData.ToString());
+
                     }
                 }
             }

@@ -317,6 +317,10 @@ namespace WebServiceAutomation.GetEndPoint
                         LaptopDetailss xmlData = (LaptopDetailss)xmlSerializer.Deserialize(textReader);
                         output.WriteLine(xmlData.ToString());
 
+
+                        //Asserts (Status Code and Response)
+                        Assert.Equal(200, restResponse.StatusCode);
+                        Assert.NotNull(restResponse.responseContent);
                     }
                 }
             }

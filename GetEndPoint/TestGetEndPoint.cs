@@ -321,6 +321,8 @@ namespace WebServiceAutomation.GetEndPoint
                         //Asserts (Status Code and Response)
                         Assert.Equal(200, restResponse.StatusCode);
                         Assert.NotNull(restResponse.responseContent);
+                        Assert.Contains("Windows 10 Home 64-bit English", xmlData.Laptop.Features.Feature);
+                        Assert.Equal("Alienware", xmlData.Laptop.BrandName);
                     }
                 }
             }

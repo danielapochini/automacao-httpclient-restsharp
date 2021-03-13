@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using WebServiceAutomation.Helpers.Request;
 using WebServiceAutomation.Model;
 using WebServiceAutomation.Model.JsonModel;
 using WebServiceAutomation.Model.XmlModel;
@@ -44,7 +45,7 @@ namespace WebServiceAutomation.GetEndPoint
         {
             HttpClient httpClient = new HttpClient();
             Uri getUri = new Uri(getUrl);
-            Task<HttpResponseMessage> httpResponse  = httpClient.GetAsync(getUri);
+            Task<HttpResponseMessage> httpResponse = httpClient.GetAsync(getUri);
             HttpResponseMessage HttpResponseMessage = httpResponse.Result;
             output.WriteLine(HttpResponseMessage.ToString());
 
@@ -93,7 +94,7 @@ namespace WebServiceAutomation.GetEndPoint
         {
             HttpClient httpClient = new HttpClient();
             HttpRequestHeaders requestHeaders = httpClient.DefaultRequestHeaders;
-            requestHeaders.Add("Accept", "application/json"); 
+            requestHeaders.Add("Accept", "application/json");
 
 
             Task<HttpResponseMessage> httpResponse = httpClient.GetAsync(getUrl);
@@ -235,7 +236,7 @@ namespace WebServiceAutomation.GetEndPoint
                     }
                 }
             }
-             
+
         }
 
         [Fact]
@@ -327,5 +328,18 @@ namespace WebServiceAutomation.GetEndPoint
                 }
             }
         }
+
+        [Fact]
+        public void GetUsingHelperMethod()
+        {
+            Dictionary<string, string> httpHeader = new Dictionary<string, string>();
+            httpHeader.Add("Accept", "application/json");
+
+            RestResponse restResponse = HttpClientHelper.PerformGetRequest(getUrl, httpHeader);
+
+            List<JsonRootObject> jsonRootObject = JsonConvert.DeserializeObject<List<JsonRootObject>>
+                (restResponse.responseContent);
+            output.WriteLine(jsonRootObject[0].ToString());
+        } 
     }
 }

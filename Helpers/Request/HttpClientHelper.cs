@@ -17,13 +17,13 @@ namespace WebServiceAutomation.Helpers.Request
         {
             httpClient = new HttpClient();
 
-            if(null != httpHeader)
+            if (null != httpHeader)
             {
                 foreach (string key in httpHeader.Keys)
                 {
                     httpClient.DefaultRequestHeaders.Add(key, httpHeader[key]);
                 }
-            } 
+            }
 
             return httpClient;
         }
@@ -50,10 +50,12 @@ namespace WebServiceAutomation.Helpers.Request
                 Task<HttpResponseMessage> httpResponseMessage = httpClient.SendAsync(httpRequestMessage);
                 restResponse = new RestResponse((int)httpResponseMessage.Result.StatusCode,
                     httpResponseMessage.Result.Content.ReadAsStringAsync().Result);
-            } catch (Exception err)
+            }
+            catch (Exception err)
             {
                 restResponse = new RestResponse(500, err.Message);
-            } finally
+            }
+            finally
             {
                 //? = null check operator
                 httpRequestMessage?.Dispose();
@@ -65,7 +67,21 @@ namespace WebServiceAutomation.Helpers.Request
 
         public static RestResponse PerformGetRequest(string requestUrl, Dictionary<string, string> httpHeader)
         {
-            return SendRequest(requestUrl, HttpMethod.Get, null, httpHeader);   
+            return SendRequest(requestUrl, HttpMethod.Get, null, httpHeader);
+        }
+
+        public static RestResponse PerformPostRequest(string requestUrl, HttpContent httpContent,
+            Dictionary<string, string> httpHeaders)
+        {
+            return SendRequest(requestUrl, HttpMethod.Post, httpContent, httpHeaders); 
+        }
+
+        public static RestResponse PerformPostRequest(string requestUrl, string data, string mediaType,
+             Dictionary<string, string> httpHeaders)
+        {
+            HttpContent httpContent = new StringContent(data, Encoding.UTF8, mediaType);
+
+            return PerformPostRequest(requestUrl, httpContent, httpHeaders);
         }
     }
 }

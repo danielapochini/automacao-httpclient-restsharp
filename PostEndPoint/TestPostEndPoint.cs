@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using WebServiceAutomation.Model;
 using WebServiceAutomation.Model.JsonModel;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace WebServiceAutomation.PostEndPoint
 {
@@ -18,7 +19,15 @@ namespace WebServiceAutomation.PostEndPoint
         private RestResponse restResponse;
         private RestResponse restResponseForGet;
         private string jsonMediaType = "application/json";
+        private string xmlMediaType = "application/xml";
         private Random random = new Random();
+
+        private readonly ITestOutputHelper output;
+
+        public TestPostEndPoint(ITestOutputHelper output)
+        {
+            this.output = output;
+        }
 
         [Fact]
         public void TestEndPointWithJson()
@@ -64,6 +73,40 @@ namespace WebServiceAutomation.PostEndPoint
                 Assert.Equal(id, jsonObject.Id);
                 Assert.Equal("Alienware", jsonObject.BrandName);
 
+            }
+        }
+
+        [Fact]
+        public void TestEndPointWithXml()
+        {
+            int id = random.Next(1000);
+
+            string xmlData =
+                    "<Laptop>" +
+                                              "<BrandName>Alienware</BrandName>" +
+                                                "<Features>" +
+                                                   "<Feature>8th Generation Intel® Core™ i5 - 8300H</Feature>" +
+                                                   "<Feature>Windows 10 Home 64 - bit English</Feature>" +
+                                                   "<Feature>NVIDIA® GeForce® GTX 1660 Ti 6GB GDDR6</Feature>" +
+                                                   "<Feature>8GB, 2x4GB, DDR4, 2666MHz</Feature>" +
+                                                 "</Features>" +
+                                              "<Id>6</Id>" +
+                                              "<LaptopName>Alienware M17</LaptopName>" +
+                                           "</Laptop>";
+
+            using (HttpClient httpClient = new HttpClient())
+            {
+                HttpContent httpContent = new StringContent(xmlData, Encoding.UTF8, xmlMediaType);
+
+                Task <HttpResponseMessage> httpResponseMessage = httpClient.PostAsync(postUrl, httpContent);
+
+                restResponse = new RestResponse((int)httpResponseMessage.Result.StatusCode, 
+                    httpResponseMessage.Result.Content.ReadAsStringAsync().Result);
+
+                Assert.Equal(200, restResponse.StatusCode);
+                Assert.NotNull(restResponse.responseContent);
+
+                output.WriteLine(restResponse.ToString()); 
             }
         }
     }

@@ -1,14 +1,18 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using WebServiceAutomation.Model;
 using WebServiceAutomation.Model.JsonModel;
+using WebServiceAutomation.Model.XmlModel;
 using Xunit;
 using Xunit.Abstractions;
+using Xunit.Sdk;
 
 namespace WebServiceAutomation.PostEndPoint
 {
@@ -90,7 +94,7 @@ namespace WebServiceAutomation.PostEndPoint
                                                    "<Feature>NVIDIA® GeForce® GTX 1660 Ti 6GB GDDR6</Feature>" +
                                                    "<Feature>8GB, 2x4GB, DDR4, 2666MHz</Feature>" +
                                                  "</Features>" +
-                                              "<Id>6</Id>" +
+                                              "<Id>"+ id +"</Id>" +
                                               "<LaptopName>Alienware M17</LaptopName>" +
                                            "</Laptop>";
 
@@ -106,7 +110,24 @@ namespace WebServiceAutomation.PostEndPoint
                 Assert.Equal(200, restResponse.StatusCode);
                 Assert.NotNull(restResponse.responseContent);
 
-                output.WriteLine(restResponse.ToString()); 
+                //output.WriteLine(restResponse.ToString()); 
+
+                httpResponseMessage = httpClient.GetAsync(getUrl + id);
+
+                if (!httpResponseMessage.Result.IsSuccessStatusCode)
+                {
+                    throw new XunitException("The HTTP response was not successful.");
+                }
+
+                restResponse = new RestResponse((int)httpResponseMessage.Result.StatusCode,
+                    httpResponseMessage.Result.Content.ReadAsStringAsync().Result);
+
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(Laptop));
+                TextReader textReader = new StringReader(restResponse.responseContent);
+                Laptop xmlObj = (Laptop)xmlSerializer.Deserialize(textReader);
+
+                Assert.Contains("8GB, 2x4GB, DDR4, 2666MHz", xmlObj.Features.Feature);
+
             }
         }
     }

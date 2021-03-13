@@ -1,18 +1,22 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using WebServiceAutomation.Model;
+using WebServiceAutomation.Model.JsonModel;
 using Xunit;
 
 namespace WebServiceAutomation.PostEndPoint
 {
     public class TestPostEndPoint
     {
-        private string postUrl = "http://localhost:8080/laptop-bag/webapi/api/add";
+        private string postUrl = "http://localhost:8080/laptop-bag/webapi/api/add/";
+        private string getUrl = "http://localhost:8080/laptop-bag/webapi/api/find/";
         private RestResponse restResponse;
+        private RestResponse restResponseForGet;
         private string jsonMediaType = "application/json";
         private Random random = new Random();
 
@@ -40,6 +44,7 @@ namespace WebServiceAutomation.PostEndPoint
 
             using (HttpClient httpClient = new HttpClient())
             {
+                httpClient.DefaultRequestHeaders.Add("Accept", jsonMediaType);
                 HttpContent httpContent = new StringContent(jsonData, Encoding.UTF8, jsonMediaType);
                 Task<HttpResponseMessage> postResponse = httpClient.PostAsync(postUrl, httpContent);
                 HttpStatusCode statusCode = postResponse.Result.StatusCode;
@@ -48,9 +53,17 @@ namespace WebServiceAutomation.PostEndPoint
 
                 restResponse = new RestResponse((int)statusCode, responseData);
 
-                Assert.Equal(200, restResponse.StatusCode);
-
+                Assert.Equal(200, restResponse.StatusCode); 
                 Assert.NotNull(restResponse.responseContent);
+
+                Task<HttpResponseMessage> getResponse = httpClient.GetAsync(getUrl + id);
+                restResponseForGet = new RestResponse((int)getResponse.Result.StatusCode, getResponse.Result.Content.ReadAsStringAsync().Result);
+
+                JsonRootObject jsonObject = JsonConvert.DeserializeObject<JsonRootObject>(restResponseForGet.responseContent);
+
+                Assert.Equal(id, jsonObject.Id);
+                Assert.Equal("Alienware", jsonObject.BrandName);
+
             }
         }
     }

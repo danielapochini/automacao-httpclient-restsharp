@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using WebServiceAutomation.Helpers.Request;
 using WebServiceAutomation.Model;
 using WebServiceAutomation.Model.JsonModel;
 using WebServiceAutomation.Model.XmlModel;
@@ -34,7 +35,7 @@ namespace WebServiceAutomation.PostEndPoint
         }
 
         [Fact]
-        public void TestEndPointWithJson()
+        public void TestPostEndPointWithJson()
         {
             // Method POST -- PostAsync
             // Body along with request - HttpContent Class
@@ -81,7 +82,7 @@ namespace WebServiceAutomation.PostEndPoint
         }
 
         [Fact]
-        public void TestEndPointWithXml()
+        public void TestPostEndPointWithXml()
         {
             int id = random.Next(1000);
 
@@ -132,7 +133,7 @@ namespace WebServiceAutomation.PostEndPoint
         }
 
         [Fact]
-        public void TestPointEndpointUsingSendAsyncJson()
+        public void TestPostEndpointUsingSendAsyncJson()
         {
             int id = random.Next(1000);
             string jsonData = "{" +
@@ -170,7 +171,7 @@ namespace WebServiceAutomation.PostEndPoint
         }
 
         [Fact]
-        public void TestPointEndpointUsingSendAsyncXml()
+        public void TestPostEndpointUsingSendAsyncXml()
         {
             int id = random.Next(1000);
 
@@ -201,10 +202,42 @@ namespace WebServiceAutomation.PostEndPoint
                         httpResponseMessage.Result.Content.ReadAsStringAsync().Result);
 
                     Assert.Equal(200, restResponse.StatusCode);
-
-
+                     
                 }
             }
+        }
+
+        [Fact]
+        public void TestPostUsingHelperClass()
+        {
+            int id = random.Next(1000);
+
+            string xmlData =
+                    "<Laptop>" +
+                                              "<BrandName>Alienware</BrandName>" +
+                                                "<Features>" +
+                                                   "<Feature>8th Generation Intel® Core™ i5 - 8300H</Feature>" +
+                                                   "<Feature>Windows 10 Home 64 - bit English</Feature>" +
+                                                   "<Feature>NVIDIA® GeForce® GTX 1660 Ti 6GB GDDR6</Feature>" +
+                                                   "<Feature>8GB, 2x4GB, DDR4, 2666MHz</Feature>" +
+                                                 "</Features>" +
+                                              "<Id>" + id + "</Id>" +
+                                              "<LaptopName>Alienware M17</LaptopName>" +
+                                           "</Laptop>";
+
+            Dictionary<string, string> httpHeader = new Dictionary<string, string>()
+            {
+                { "Accept", "application/json" }
+            };
+
+
+            restResponse = HttpClientHelper.PerformPostRequest(postUrl, xmlData, xmlMediaType, httpHeader);
+
+            //HttpContent httpContent = new StringContent(xmlData, Encoding.UTF8, xmlMediaType); 
+            //HttpClientHelper.PerformPostRequest(postUrl, httpContent, httpHeader);
+
+
+            Assert.Equal(200, restResponse.StatusCode);
         }
     }
 }

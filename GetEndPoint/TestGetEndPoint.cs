@@ -203,7 +203,7 @@ namespace WebServiceAutomation.GetEndPoint
         }
 
         [Fact]
-        public void TestUsingStatement()
+        public void TestGetEndPointUsingStatement()
         {
             //using statement automatically calls the dispose() to release the resources
             using (HttpClient httpClient = new HttpClient())
@@ -240,7 +240,7 @@ namespace WebServiceAutomation.GetEndPoint
         }
 
         [Fact]
-        public void TestDeserilizationOfJsonResponse()
+        public void TestGetEndpointDeserilizationOfJsonResponse()
         {
             using (HttpClient httpClient = new HttpClient())
             {
@@ -280,7 +280,7 @@ namespace WebServiceAutomation.GetEndPoint
         }
 
         [Fact]
-        public void TestDeserilizationOfXmlResponse()
+        public void TestGetEndpointDeserilizationOfXmlResponse()
         {
             using (HttpClient httpClient = new HttpClient())
             {
@@ -330,7 +330,7 @@ namespace WebServiceAutomation.GetEndPoint
         }
 
         [Fact]
-        public void GetUsingHelperMethod()
+        public void TestGetEndpointUsingHelperMethod()
         {
             Dictionary<string, string> httpHeader = new Dictionary<string, string>();
             httpHeader.Add("Accept", "application/json");

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using WebServiceAutomation.Helpers.Request;
+using WebServiceAutomation.Helpers.Response;
 using WebServiceAutomation.Model;
 using WebServiceAutomation.Model.JsonModel;
 using WebServiceAutomation.Model.XmlModel;
@@ -221,13 +222,13 @@ namespace WebServiceAutomation.PostEndPoint
                                                    "<Feature>NVIDIA® GeForce® GTX 1660 Ti 6GB GDDR6</Feature>" +
                                                    "<Feature>8GB, 2x4GB, DDR4, 2666MHz</Feature>" +
                                                  "</Features>" +
-                                              "<Id>" + id + "</Id>" +
+                                              "<Id> " + id + "</Id>" +
                                               "<LaptopName>Alienware M17</LaptopName>" +
                                            "</Laptop>";
 
             Dictionary<string, string> httpHeader = new Dictionary<string, string>()
             {
-                { "Accept", "application/json" }
+                { "Accept", "application/xml" }
             };
 
 
@@ -236,8 +237,11 @@ namespace WebServiceAutomation.PostEndPoint
             //HttpContent httpContent = new StringContent(xmlData, Encoding.UTF8, xmlMediaType); 
             //HttpClientHelper.PerformPostRequest(postUrl, httpContent, httpHeader);
 
-
             Assert.Equal(200, restResponse.StatusCode);
+
+            Laptop xmlDatat = ResponseDataHelper.DeserializeXmlResponse<Laptop>(restResponse.responseContent);
+            Console.WriteLine(xmlDatat.ToString());
+
         }
     }
 }

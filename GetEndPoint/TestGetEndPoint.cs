@@ -10,6 +10,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using WebServiceAutomation.Helpers.Request;
+using WebServiceAutomation.Helpers.Response;
 using WebServiceAutomation.Model;
 using WebServiceAutomation.Model.JsonModel;
 using WebServiceAutomation.Model.XmlModel;
@@ -341,5 +342,20 @@ namespace WebServiceAutomation.GetEndPoint
                 (restResponse.responseContent);
             output.WriteLine(jsonRootObject[0].ToString());
         } 
+
+        [Fact]
+        public void GetUsingHelperClass()
+        {
+            Dictionary<string, string> httpHeader = new Dictionary<string, string>()
+            {
+                { "Accept", "application/json" }
+            };
+
+            RestResponse restResponse = HttpClientHelper.PerformGetRequest(getUrl, httpHeader);
+
+            List<JsonRootObject> jsonData = ResponseDataHelper.DeserializeJsonResponse<List<JsonRootObject>>(restResponse.responseContent);
+
+            output.WriteLine(jsonData.ToString());
+        }
     }
 }

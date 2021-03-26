@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using WebServiceAutomation.Helpers.Request;
 using WebServiceAutomation.Helpers.Response;
 using WebServiceAutomation.Model;
+using WebServiceAutomation.Model.JsonModel;
 using WebServiceAutomation.Model.XmlModel;
 using Xunit;
 
@@ -23,7 +24,7 @@ namespace WebServiceAutomation.PutEndpoint
         private Random random = new Random();
 
         [Fact]
-        public void TestPutUsingJsonData()
+        public void TestPutUsingXmlData()
         {
             int id = random.Next(1000);
             string xmlData =
@@ -75,9 +76,72 @@ namespace WebServiceAutomation.PutEndpoint
 
             restResponse = HttpClientHelper.PerformGetRequest(getUrl + id, headers);
             Assert.Equal(200, restResponse.StatusCode);
+
             Laptop xmlObj = ResponseDataHelper.DeserializeXmlResponse<Laptop>(restResponse.responseContent);
             Assert.Contains("1 TB of SSD", xmlObj.Features.Feature);
         }
 
+        [Fact]
+        public void TestPutUsingJsonData()
+        {
+            int id = random.Next(1000);
+
+            string jsonData = "{" +
+                        "\"BrandName\": \"Alienware\"," +
+                        "\"Features\": {" +
+                        "\"Feature\": [" +
+                        "\"8th Generation Intel® Core™ i5-8300H\"," +
+                        "\"Windows 10 Home 64-bit English\"," +
+                        "\"NVIDIA® GeForce® GTX 1660 Ti 6GB GDDR6\"," +
+                        "\"8GB, 2x4GB, DDR4, 2666MHz\"" +
+                        "]" +
+                        "}," +
+                        "\"Id\": " + id + "," +
+                        "\"LaptopName\": \"Alienware M17\"" +
+                    "}";
+
+            Dictionary<string, string> headers = new Dictionary<string, string>()
+            {
+            {"Accept","application/json"}
+            };
+
+            restResponse = HttpClientHelper.PerformPostRequest(postUrl, jsonData, jsonMediaType, headers);
+            Assert.Equal(200, restResponse.StatusCode);
+
+            jsonData = "{" +
+                        "\"BrandName\": \"Alienware\"," +
+                        "\"Features\": {" +
+                        "\"Feature\": [" +
+                        "\"8th Generation Intel® Core™ i5-8300H\"," +
+                        "\"Windows 10 Home 64-bit English\"," +
+                        "\"NVIDIA® GeForce® GTX 1660 Ti 6GB GDDR6\"," +
+                        "\"1 TB of SSD\"," +
+                        "\"8GB, 2x4GB, DDR4, 2666MHz\"" +
+                        "]" +
+                        "}," +
+                        "\"Id\": " + id + "," +
+                        "\"LaptopName\": \"Alienware M17\"" +
+                    "}";
+
+            using (HttpClient httpClient = new HttpClient())
+            {
+                HttpContent httpContent = new StringContent(jsonData, Encoding.UTF8, jsonMediaType);
+
+                Task<HttpResponseMessage> httpResponseMessage = httpClient.PutAsync(putUrl, httpContent);
+
+                restResponse = new RestResponse((int)httpResponseMessage.Result.StatusCode,
+                    httpResponseMessage.Result.Content.ReadAsStringAsync().Result);
+
+                Assert.Equal(200, restResponse.StatusCode);
+            }
+
+            restResponse = HttpClientHelper.PerformGetRequest(getUrl + id, headers);
+            Assert.Equal(200, restResponse.StatusCode);
+
+            JsonRootObject jsonObject = ResponseDataHelper.DeserializeJsonResponse<JsonRootObject>
+                (restResponse.responseContent);
+
+            Assert.Contains("1 TB of SSD", jsonObject.Features.Feature);
+        }
     }
 }

@@ -83,5 +83,16 @@ namespace WebServiceAutomation.Helpers.Request
 
             return PerformPostRequest(requestUrl, httpContent, httpHeaders);
         }
+
+        public static RestResponse PerformPutRequest(string requestUrl, string content, string mediaType, Dictionary<string,string> headers)
+        {
+            HttpContent httpContent = new StringContent(content, Encoding.UTF8, mediaType);
+            return SendRequest(requestUrl, HttpMethod.Put, httpContent, headers);
+        }
+
+        public static RestResponse PerformPutRequest(string requestUrl, HttpContent httpContent, string mediaType, Dictionary<string, string> headers)
+        {
+            return SendRequest(requestUrl, HttpMethod.Put, httpContent, headers);
+        }
     }
 }

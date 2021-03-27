@@ -28,14 +28,30 @@ namespace WebServiceAutomation.DeleteEndPoint
             {
                 Task<HttpResponseMessage> httpResponseMessage = httpClient.DeleteAsync(deleteUrl + id);
                 HttpStatusCode httpStatusCode = httpResponseMessage.Result.StatusCode;
+                
                 Assert.Equal(200, (int)httpStatusCode);
 
                 httpResponseMessage = httpClient.DeleteAsync(deleteUrl + id);
                 httpStatusCode = httpResponseMessage.Result.StatusCode;
+                
                 Assert.Equal(404, (int)httpStatusCode);
             }
         }
          
+        [Fact]
+        public void TestDeleteUsingHelperClass()
+        {
+            int id = random.Next(1000);
+            RequestHelper.AddRecord(postUrl, id);
+
+            var restResponse = HttpClientHelper.PerformDeleteRequest(deleteUrl + id);
+
+            Assert.Equal(200, (int)restResponse.StatusCode);
+
+            restResponse = HttpClientHelper.PerformDeleteRequest(deleteUrl + id);
+
+            Assert.Equal(404, (int)restResponse.StatusCode);
+        }
        
     }
 }

@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using WebServiceAutomation.Helpers.Authentication;
 using WebServiceAutomation.Helpers.Request;
 using WebServiceAutomation.Helpers.Response;
 using WebServiceAutomation.Model;
@@ -361,12 +362,17 @@ namespace WebServiceAutomation.GetEndPoint
 
         [Fact]
         public void TestSecureGetEndPoint()
-        {
-            Dictionary<string, string> httpHeader = new Dictionary<string, string>()
+        { 
+            string authHeader = Base64StringConverter.GetBase64String("admin", "welcome");
+            authHeader = "Basic " + authHeader;
+
+            Dictionary<string, string> httpHeader = new Dictionary<string, string>
             {
                 { "Accept", "application/json" },
-                {"Authorization", "Basic YWRtaW46d2VsY29tZQ==" }
+                { "Authorization", authHeader }
             };
+            //{"Authorization", "Basic YWRtaW46d2VsY29tZQ==" } 
+
 
             RestResponse restResponse = HttpClientHelper.PerformGetRequest(secureGetUrl, httpHeader);
 

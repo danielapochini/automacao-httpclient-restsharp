@@ -165,5 +165,66 @@ namespace WebServiceAutomation.ParallelExecution
             putTask.Wait();
 
         }
+
+        [Fact]
+        public void TestTaskUsingTaskFactoryWithResponse()
+        {
+            Task<RestResponse> getTask = Task.Factory.StartNew<RestResponse>(() =>
+            {
+                return SendGetRequestWithResponse();
+            });
+
+            Task<RestResponse> postTask = Task.Factory.StartNew<RestResponse>(() =>
+            {
+                return SendPostRequestWithResponse();
+            });
+
+            Console.WriteLine(getTask.Result.responseContent);
+            Console.WriteLine(postTask.Result.responseContent); 
+        }
+
+        private RestResponse SendGetRequestWithResponse()
+        {
+            Dictionary<string, string> httpHeader = new Dictionary<string, string>();
+            httpHeader.Add("Accept", "application/json");
+
+            RestResponse restResponse = httpAsyncClientHelper.PerformGetRequest(delayGetUrl, httpHeader).GetAwaiter().GetResult();
+             
+            Assert.Equal(200, restResponse.StatusCode); 
+
+            return restResponse;
+        }
+
+        private RestResponse SendPostRequestWithResponse()
+        {
+            int id = random.Next(1000);
+            string xmlData = "<Laptop>" +
+                                     "<BrandName>Alienware</BrandName>" +
+                                     "<Features>" +
+                                        "<Feature>8th Generation Intel® Core™ i5 - 8300H</Feature>" +
+                                        "<Feature>Windows 10 Home 64 - bit English</Feature>" +
+                                        "<Feature>NVIDIA® GeForce® GTX 1660 Ti 6GB GDDR6</Feature>" +
+                                        "<Feature>8GB, 2x4GB, DDR4, 2666MHz</Feature>" +
+                                      "</Features>" +
+                                   "<Id> " + id + "</Id>" +
+                                   "<LaptopName>Alienware M17</LaptopName>" +
+                                "</Laptop>";
+
+
+            Dictionary<string, string> headers = new Dictionary<string, string>()
+            {
+                { "Accept","application/xml"}
+            };
+
+            RestResponse restResponse = httpAsyncClientHelper.PerformPostRequest(delayPostUrl, xmlData, xmlMediaType, headers).GetAwaiter().GetResult();
+             
+            Assert.Equal(200, restResponse.StatusCode);
+
+            Console.WriteLine(">>>>>>>>>>" + restResponse.responseContent);
+
+            //Laptop xmlDatat = ResponseDataHelper.DeserializeXmlResponse<Laptop>(restResponse.ResponseContent);
+            //Console.WriteLine(xmlDatat.ToString());
+            return restResponse;
+        }
     }
 }

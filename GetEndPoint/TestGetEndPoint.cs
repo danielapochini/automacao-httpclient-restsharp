@@ -32,6 +32,7 @@ namespace WebServiceAutomation.GetEndPoint
 
         private string getUrl = "http://localhost:8080/laptop-bag/webapi/api/all";
         private string secureGetUrl = "http://localhost:8080/laptop-bag/webapi/secure/all";
+        private string delayGet = "http://localhost:8080/laptop-bag/webapi/delay/all";
 
         [Fact]
         public void TestGetAllEndPoint()
@@ -356,8 +357,7 @@ namespace WebServiceAutomation.GetEndPoint
             RestResponse restResponse = HttpClientHelper.PerformGetRequest(getUrl, httpHeader);
 
             List<JsonRootObject> jsonData = ResponseDataHelper.DeserializeJsonResponse<List<JsonRootObject>>(restResponse.responseContent);
-
-            output.WriteLine(jsonData.ToString());
+             
         }
 
         [Fact]
@@ -379,8 +379,64 @@ namespace WebServiceAutomation.GetEndPoint
             Assert.Equal(200, restResponse.StatusCode); 
 
             List<JsonRootObject> jsonData = ResponseDataHelper.DeserializeJsonResponse<List<JsonRootObject>>(restResponse.responseContent);
+             
+        }
 
-            output.WriteLine(jsonData.ToString());
+        [Fact]
+        public void TestGetEndPointSync()
+        {
+            HttpClientHelper.PerformGetRequest("http://localhost:8080/laptop-bag/webapi/delay/all", null);
+
+            HttpClientHelper.PerformGetRequest("http://localhost:8080/laptop-bag/webapi/delay/all", null);
+
+            HttpClientHelper.PerformGetRequest("http://localhost:8080/laptop-bag/webapi/delay/all", null);
+
+            HttpClientHelper.PerformGetRequest("http://localhost:8080/laptop-bag/webapi/delay/all", null);
+        }
+
+        [Fact]
+        public void TestGetEndPointAsync()
+        {
+
+            Task t1 = new Task(GetEndPoint());
+            t1.Start();
+            Task t2 = new Task(GetEndPoint());
+            t2.Start();
+            Task t3 = new Task(GetEndPoint());
+            t3.Start();
+            Task t4 = new Task(GetEndPointFailed());
+            t4.Start();
+
+            t1.Wait();
+            t2.Wait();
+            t3.Wait();
+            t4.Wait();
+        }
+
+        private Action GetEndPoint()
+        {
+            Dictionary<string, string> headers = new Dictionary<string, string>()
+            {
+                { "Accept","application/xml"},
+            };
+            return new Action(() =>
+            {
+                RestResponse restResponse = HttpClientHelper.PerformGetRequest(delayGet, headers);
+                Assert.Equal(200, restResponse.StatusCode);
+            });
+        }
+
+        private Action GetEndPointFailed()
+        {
+            Dictionary<string, string> headers = new Dictionary<string, string>()
+            {
+                { "Accept","application/xml"},
+            };
+            return new Action(() =>
+            {
+                RestResponse restResponse = HttpClientHelper.PerformGetRequest(delayGet, headers);
+                Assert.Equal(201, restResponse.StatusCode);
+            });
         }
     }
 }

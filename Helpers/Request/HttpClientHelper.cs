@@ -99,5 +99,10 @@ namespace WebServiceAutomation.Helpers.Request
         {
             return SendRequest(requestUrl, HttpMethod.Delete, null, null);
         }
+
+        public static RestResponse PerformDeleteRequest(string requestUrl, Dictionary<string,string> headers)
+        {
+            return SendRequest(requestUrl, HttpMethod.Delete, null, headers);
+        }
     }
 }

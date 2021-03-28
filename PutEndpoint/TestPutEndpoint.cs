@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using WebServiceAutomation.Helpers.Authentication;
 using WebServiceAutomation.Helpers.Request;
 using WebServiceAutomation.Helpers.Response;
 using WebServiceAutomation.Model;
@@ -17,8 +18,10 @@ namespace WebServiceAutomation.PutEndpoint
         private string postUrl = "http://localhost:8080/laptop-bag/webapi/api/add/";
         private string getUrl = "http://localhost:8080/laptop-bag/webapi/api/find/";
         private string putUrl = "http://localhost:8080/laptop-bag/webapi/api/update/";
-        private RestResponse restResponse;
-        private RestResponse restResponseForGet;
+        private string securePostUrl = "http://localhost:8080/laptop-bag/webapi/secure/add/";
+        private string secureGetUrl = "http://localhost:8080/laptop-bag/webapi/secure/find/";
+        private string securePutUrl = "http://localhost:8080/laptop-bag/webapi/secure/update/";
+        private RestResponse restResponse; 
         private string jsonMediaType = "application/json";
         private string xmlMediaType = "application/xml";
         private Random random = new Random();
@@ -244,6 +247,59 @@ namespace WebServiceAutomation.PutEndpoint
             restResponse = HttpClientHelper.PerformGetRequest(getUrl + id, headers);
             Assert.Equal(200, restResponse.StatusCode);
   
+            Laptop xmlObj = ResponseDataHelper.DeserializeXmlResponse<Laptop>(restResponse.responseContent);
+            Assert.Contains("1 TB of SSD", xmlObj.Features.Feature);
+        }
+
+        [Fact]
+        public void TestSecurePutEndPoint()
+        {
+            int id = random.Next(1000);
+            string xmlData =
+                                           "<Laptop>" +
+                                              "<BrandName>Alienware</BrandName>" +
+                                                "<Features>" +
+                                                   "<Feature>8th Generation Intel® Core™ i5 - 8300H</Feature>" +
+                                                   "<Feature>Windows 10 Home 64 - bit English</Feature>" +
+                                                   "<Feature>NVIDIA® GeForce® GTX 1660 Ti 6GB GDDR6</Feature>" +
+                                                   "<Feature>8GB, 2x4GB, DDR4, 2666MHz</Feature>" +
+                                                 "</Features>" +
+                                              "<Id>" + id + "</Id>" +
+                                              "<LaptopName>Alienware M17</LaptopName>" +
+                                           "</Laptop>";
+
+            string authHeader = Base64StringConverter.GetBase64String("admin", "welcome");
+            authHeader = "Basic " + authHeader;
+
+            Dictionary<string, string> headers = new Dictionary<string, string>()
+            {
+                { "Accept", "application/xml" },
+                { "Authorization", authHeader }
+            };
+
+            restResponse = HttpClientHelper.PerformPostRequest(securePostUrl, xmlData, xmlMediaType, headers);
+            Assert.Equal(200, restResponse.StatusCode);
+
+            xmlData =
+                               "<Laptop>" +
+                                  "<BrandName>Alienware</BrandName>" +
+                                    "<Features>" +
+                                       "<Feature>8th Generation Intel® Core™ i5 - 8300H</Feature>" +
+                                       "<Feature>Windows 10 Home 64 - bit English</Feature>" +
+                                       "<Feature>NVIDIA® GeForce® GTX 1660 Ti 6GB GDDR6</Feature>" +
+                                       "<Feature>8GB, 2x4GB, DDR4, 2666MHz</Feature>" +
+                                       "<Feature>1 TB of SSD</Feature>" +
+                                     "</Features>" +
+                                  "<Id>" + id + "</Id>" +
+                                  "<LaptopName>Alienware M17</LaptopName>" +
+                               "</Laptop>";
+
+            restResponse = HttpClientHelper.PerformPutRequest(securePutUrl, xmlData, xmlMediaType, headers);
+            Assert.Equal(200, restResponse.StatusCode);
+
+            restResponse = HttpClientHelper.PerformGetRequest(secureGetUrl + id, headers);
+            Assert.Equal(200, restResponse.StatusCode);
+
             Laptop xmlObj = ResponseDataHelper.DeserializeXmlResponse<Laptop>(restResponse.responseContent);
             Assert.Contains("1 TB of SSD", xmlObj.Features.Feature);
         }

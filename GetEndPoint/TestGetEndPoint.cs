@@ -30,6 +30,7 @@ namespace WebServiceAutomation.GetEndPoint
         }
 
         private string getUrl = "http://localhost:8080/laptop-bag/webapi/api/all";
+        private string secureGetUrl = "http://localhost:8080/laptop-bag/webapi/secure/all";
 
         [Fact]
         public void TestGetAllEndPoint()
@@ -352,6 +353,24 @@ namespace WebServiceAutomation.GetEndPoint
             };
 
             RestResponse restResponse = HttpClientHelper.PerformGetRequest(getUrl, httpHeader);
+
+            List<JsonRootObject> jsonData = ResponseDataHelper.DeserializeJsonResponse<List<JsonRootObject>>(restResponse.responseContent);
+
+            output.WriteLine(jsonData.ToString());
+        }
+
+        [Fact]
+        public void TestSecureGetEndPoint()
+        {
+            Dictionary<string, string> httpHeader = new Dictionary<string, string>()
+            {
+                { "Accept", "application/json" },
+                {"Authorization", "Basic YWRtaW46d2VsY29tZQ==" }
+            };
+
+            RestResponse restResponse = HttpClientHelper.PerformGetRequest(secureGetUrl, httpHeader);
+
+            Assert.Equal(200, restResponse.StatusCode); 
 
             List<JsonRootObject> jsonData = ResponseDataHelper.DeserializeJsonResponse<List<JsonRootObject>>(restResponse.responseContent);
 

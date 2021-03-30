@@ -36,5 +36,35 @@ namespace RestSharpAutomation.RestGetEndPoint
                 output.WriteLine("Status code: " + restResponse.Content);
             }
         }
+
+        [Fact]
+        public void TestGetInXmlFormat()
+        {
+            IRestClient restClient = new RestClient();
+            IRestRequest restRequest = new RestRequest(getUrl);
+            restRequest.AddHeader("Accept", "application/xml");
+            IRestResponse restResponse = restClient.Get(restRequest);
+
+            if (restResponse.IsSuccessful)
+            {
+                output.WriteLine("Status code: " + restResponse.StatusCode);
+                output.WriteLine("Status code: " + restResponse.Content);
+            }
+        }
+
+        [Fact]
+        public void TestGetInJsonFormat()
+        {
+            IRestClient restClient = new RestClient();
+            IRestRequest restRequest = new RestRequest(getUrl);
+            restRequest.AddHeader("Accept", "application/json");
+            IRestResponse restResponse = restClient.Get(restRequest);
+
+            if (restResponse.IsSuccessful)
+            {
+                output.WriteLine("Status code: " + restResponse.StatusCode);
+                output.WriteLine("Status code: " + restResponse.Content);
+            }
+        }
     }
 }

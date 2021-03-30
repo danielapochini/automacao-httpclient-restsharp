@@ -9,6 +9,6 @@ namespace WebServiceAutomation.Model.XmlModel
     public class LaptopDetailss
     {
         [XmlElement(ElementName = "Laptop")]
-        public Laptop Laptop { get; set; }
+        public List <Laptop> Laptop { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using WebServiceAutomation.Model.JsonModel;
+using WebServiceAutomation.Model.XmlModel;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -93,6 +94,40 @@ namespace RestSharpAutomation.RestGetEndPoint
                 Assert.Equal("Alienware M17", jsonRootObject.LaptopName);
                 Assert.Contains("8th Generation Intel® Core™ i5-8300H", jsonRootObject.Features.Feature);
             } else
+            {
+                output.WriteLine("Error msg: " + restResponse.ErrorMessage);
+                output.WriteLine("Stack Trace: " + restResponse.ErrorException);
+            }
+        }
+
+        [Fact]
+        public void TestGetWithXmlDeserialize()
+        {
+            IRestClient restClient = new RestClient();
+            IRestRequest restRequest = new RestRequest(getUrl);
+            restRequest.AddHeader("Accept", "application/xml");
+
+            var dotNetXmlDeserializer = new RestSharp.Deserializers.DotNetXmlDeserializer();
+
+            //IRestResponse<LaptopDetailss> restResponse = restClient.Get<LaptopDetailss>(restRequest);
+            IRestResponse restResponse = restClient.Get(restRequest);
+
+            if (restResponse.IsSuccessful)
+            {
+                Assert.Equal(200, (int)restResponse.StatusCode);
+
+                //  restResponse.Data retorna o objeto depois da deserialização 
+                LaptopDetailss data = dotNetXmlDeserializer.Deserialize<LaptopDetailss>(restResponse); 
+
+                Laptop laptop = data.Laptop.Find((x) =>
+                {
+                    return x.Id.Equals("1", StringComparison.OrdinalIgnoreCase);
+                });
+
+                Assert.Equal("Alienware M17", laptop.LaptopName);
+                Assert.Contains("8th Generation Intel® Core™ i5-8300H", laptop.Features.Feature);
+            }
+            else
             {
                 output.WriteLine("Error msg: " + restResponse.ErrorMessage);
                 output.WriteLine("Stack Trace: " + restResponse.ErrorException);

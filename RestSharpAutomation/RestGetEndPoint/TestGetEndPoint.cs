@@ -24,10 +24,17 @@ namespace RestSharpAutomation.RestGetEndPoint
             IRestClient restClient = new RestClient();
             IRestRequest restRequest = new RestRequest(getUrl);
             IRestResponse restResponse = restClient.Get(restRequest);
-            output.WriteLine($"{restResponse.IsSuccessful}");
+
+            /*output.WriteLine($"{restResponse.IsSuccessful}");
             output.WriteLine($"{restResponse.StatusCode}");
             output.WriteLine($"{restResponse.ErrorMessage}");
-            output.WriteLine($"{restResponse.ErrorException}");
+            output.WriteLine($"{restResponse.ErrorException}");*/
+
+            if (restResponse.IsSuccessful)
+            {
+                output.WriteLine("Status code: " + restResponse.StatusCode);
+                output.WriteLine("Status code: " + restResponse.Content);
+            }
         }
     }
 }

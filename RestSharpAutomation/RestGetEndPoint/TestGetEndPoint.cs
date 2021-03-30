@@ -133,5 +133,24 @@ namespace RestSharpAutomation.RestGetEndPoint
                 output.WriteLine("Stack Trace: " + restResponse.ErrorException);
             }
         }
+
+        [Fact]  
+        public void TestGetWithExecute()
+        {
+            IRestClient restClient = new RestClient();
+            IRestRequest restRequest = new RestRequest()
+            {
+                Method = Method.GET,
+                Resource = getUrl
+            };
+
+            restRequest.AddHeader("Accept", "application/json");
+
+            //Execute() passando o tipo irá deserializa a response após enviar a request
+            IRestResponse<List<Laptop>> restResponse = restClient.Execute<List<Laptop>>(restRequest);
+
+            Assert.Equal(200, (int)restResponse.StatusCode);
+            Assert.NotNull(restResponse.Data);
+        }
     }
 }

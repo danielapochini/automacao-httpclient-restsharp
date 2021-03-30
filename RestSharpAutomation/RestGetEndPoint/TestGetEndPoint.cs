@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using WebServiceAutomation.Model.JsonModel;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -64,6 +65,27 @@ namespace RestSharpAutomation.RestGetEndPoint
             {
                 output.WriteLine("Status code: " + restResponse.StatusCode);
                 output.WriteLine("Status code: " + restResponse.Content);
+            }
+        }
+
+        [Fact]
+        public void TestGetWithJsonDeserialize()
+        {
+            IRestClient restClient = new RestClient();
+            IRestRequest restRequest = new RestRequest(getUrl);
+            restRequest.AddHeader("Accept", "application/json");
+
+            IRestResponse <List<JsonRootObject>> restResponse = restClient.Get<List<JsonRootObject>>(restRequest); 
+
+            if (restResponse.IsSuccessful)
+            {
+                output.WriteLine("Status code: " + restResponse.StatusCode); 
+                output.WriteLine("Size of the list: " + restResponse.Data.Count);
+                //  restResponse.Data retorna o objeto depois da deserialização 
+            } else
+            {
+                output.WriteLine("Error msg: " + restResponse.ErrorMessage);
+                output.WriteLine("Stack Trace: " + restResponse.ErrorException);
             }
         }
     }

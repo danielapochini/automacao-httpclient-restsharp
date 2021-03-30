@@ -90,8 +90,8 @@ namespace RestSharpAutomation.RestGetEndPoint
                     return x.Id == 1;
                 });
 
-                Assert.Equal("AlienWare M17", jsonRootObject.LaptopName);
-                Assert.Contains("8th Generation Intel® Core™ i5 - 8300H", jsonRootObject.Features.Feature);
+                Assert.Equal("Alienware M17", jsonRootObject.LaptopName);
+                Assert.Contains("8th Generation Intel® Core™ i5-8300H", jsonRootObject.Features.Feature);
             } else
             {
                 output.WriteLine("Error msg: " + restResponse.ErrorMessage);

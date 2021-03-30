@@ -78,10 +78,20 @@ namespace RestSharpAutomation.RestGetEndPoint
             IRestResponse <List<JsonRootObject>> restResponse = restClient.Get<List<JsonRootObject>>(restRequest); 
 
             if (restResponse.IsSuccessful)
-            {
-                output.WriteLine("Status code: " + restResponse.StatusCode); 
-                output.WriteLine("Size of the list: " + restResponse.Data.Count);
+            { 
+                Assert.Equal(200, (int)restResponse.StatusCode);
+
                 //  restResponse.Data retorna o objeto depois da deserialização 
+                List<JsonRootObject> data = restResponse.Data;
+                
+                //expressao lambda para filtrar a lista e pegar o objeto com o id igual a 1
+                JsonRootObject jsonRootObject = data.Find((x) =>
+                {
+                    return x.Id == 1;
+                });
+
+                Assert.Equal("AlienWare M17", jsonRootObject.LaptopName);
+                Assert.Contains("8th Generation Intel® Core™ i5 - 8300H", jsonRootObject.Features.Feature);
             } else
             {
                 output.WriteLine("Error msg: " + restResponse.ErrorMessage);

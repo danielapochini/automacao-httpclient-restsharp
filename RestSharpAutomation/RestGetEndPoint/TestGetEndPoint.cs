@@ -1,4 +1,5 @@
 ﻿using RestSharp;
+using RestSharpAutomation.HelperClass.Request;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -148,6 +149,67 @@ namespace RestSharpAutomation.RestGetEndPoint
 
             //Execute() passando o tipo irá deserializa a response após enviar a request
             IRestResponse<List<Laptop>> restResponse = restClient.Execute<List<Laptop>>(restRequest);
+
+            Assert.Equal(200, (int)restResponse.StatusCode);
+            Assert.NotNull(restResponse.Data);
+        }
+
+        [Fact]
+        public void TestGetWithXmlUsingHelperClass()
+        {
+            Dictionary<string, string> headers = new Dictionary<string, string>()
+            {
+                {"Accept", "application/xml" }
+            };
+
+            RestClientHelper restClientHelper = new RestClientHelper();
+            IRestResponse restResponse = restClientHelper.PerformGetRequest(getUrl, headers);
+            
+            Assert.Equal(200, (int)restResponse.StatusCode);
+            Assert.NotNull(restResponse.Content);
+
+        }
+
+        [Fact]
+        public void TestGetWithXmlUsingHelperClassAndTyped()
+        {
+            Dictionary<string, string> headers = new Dictionary<string, string>()
+            {
+                {"Accept", "application/xml" }
+            };
+
+            RestClientHelper restClientHelper = new RestClientHelper();
+            IRestResponse<LaptopDetailss> restResponse = restClientHelper.PerformGetRequest<LaptopDetailss>(getUrl, headers);
+            
+            Assert.Equal(200, (int)restResponse.StatusCode);
+            Assert.NotNull(restResponse.Data);
+        }
+
+        [Fact]
+        public void TestGetWithJsonUsingHelperClass()
+        {
+            Dictionary<string, string> headers = new Dictionary<string, string>()
+            {
+                {"Accept", "application/json" }
+            };
+
+            RestClientHelper restClientHelper = new RestClientHelper();
+            IRestResponse restResponse = restClientHelper.PerformGetRequest(getUrl, headers);
+            
+            Assert.Equal(200, (int)restResponse.StatusCode);
+            Assert.NotNull(restResponse.Content);
+        }
+
+        [Fact]
+        public void TestGetWithJsonUsingHelperClassAndTyped()
+        {
+            Dictionary<string, string> headers = new Dictionary<string, string>()
+            {
+                {"Accept", "application/json" }
+            };
+
+            RestClientHelper restClientHelper = new RestClientHelper();
+            IRestResponse<List<Laptop>> restResponse = restClientHelper.PerformGetRequest<List<Laptop>>(getUrl, headers);
 
             Assert.Equal(200, (int)restResponse.StatusCode);
             Assert.NotNull(restResponse.Data);

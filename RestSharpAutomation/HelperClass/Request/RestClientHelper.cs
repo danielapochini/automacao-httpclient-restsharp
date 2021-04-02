@@ -13,7 +13,7 @@ namespace RestSharpAutomation.HelperClass.Request
             return restClient;
         }
 
-        private IRestRequest GetRestRequest(string url, Dictionary<string, string> headers, Method method)
+        private IRestRequest GetRestRequest(string url, Dictionary<string, string> headers, Method method, object body)
         {
             IRestRequest restRequest = new RestRequest()
             {
@@ -29,7 +29,13 @@ namespace RestSharpAutomation.HelperClass.Request
                 }
             }
 
-            return restRequest;
+            if (body != null)
+            {
+                restRequest.AddJsonBody(body);
+            }
+
+
+                return restRequest;
         }
 
         private IRestResponse SendRequest(IRestRequest restRequest)
@@ -67,6 +73,14 @@ namespace RestSharpAutomation.HelperClass.Request
             IRestRequest restRequest = GetRestRequest(url, headers, Method.GET);
             IRestResponse<T> restResponse = SendRequest<T>(restRequest);
 
+            return restResponse;
+        }
+
+        public IRestResponse<T> PerformPostRequest<T>(string url, Dictionary<string, string> headers, object body) where T : new()
+        {
+            IRestRequest restRequest = GetRestRequest(url, headers, Method.POST, body);
+            IRestResponse<T> restResponse = SendRequest<T>(restRequest);
+            
             return restResponse;
         }
     }

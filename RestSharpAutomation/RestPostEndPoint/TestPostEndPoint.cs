@@ -76,7 +76,7 @@ namespace RestSharpAutomation.RestPostEndPoint
             };
 
             request.AddHeader("Content-Type", "application/json");
-            request.AddHeader("Accept", "application/xml"); 
+            request.AddHeader("Accept", "application/xml");
             request.AddJsonBody(GetLaptopObject());
 
             IRestResponse response = restClient.Post(request);
@@ -86,18 +86,115 @@ namespace RestSharpAutomation.RestPostEndPoint
 
         [Fact]
         public void TestPostWithModelObjectHelperClass()
-        { 
-            RestClientHelper restClientHelper = new RestClientHelper();   
+        {
+            RestClientHelper restClientHelper = new RestClientHelper();
             Dictionary<string, string> headers = new Dictionary<string, string>()
             {
                 { "Accept", "application/json" },
                 { "Content-Type", "application/json" }
             };
 
-            IRestResponse<Laptop> restResponse = restClientHelper.PerformPostRequest<Laptop>(postUrl, headers, GetLaptopObject());
+            IRestResponse<Laptop> restResponse = restClientHelper.PerformPostRequest<Laptop>(postUrl, headers, GetLaptopObject(), DataFormat.Json);
 
             Assert.Equal(200, (int)restResponse.StatusCode);
             Assert.NotNull(restResponse.Data);
         }
-    } 
+
+        [Fact]
+        public void TestPostWithXmlData()
+        { 
+            int id = random.Next(1000); 
+            string xmlData =
+                    "<Laptop>" +
+                                              "<BrandName>Alienware</BrandName>" +
+                                                "<Features>" +
+                                                   "<Feature>8th Generation Intel® Core™ i5 - 8300H</Feature>" +
+                                                   "<Feature>Windows 10 Home 64 - bit English</Feature>" +
+                                                   "<Feature>NVIDIA® GeForce® GTX 1660 Ti 6GB GDDR6</Feature>" +
+                                                   "<Feature>8GB, 2x4GB, DDR4, 2666MHz</Feature>" +
+                                                 "</Features>" +
+                                              "<Id> " + id + "</Id>" +
+                                              "<LaptopName>Alienware M17</LaptopName>" +
+                                           "</Laptop>";
+
+            IRestClient client = new RestClient();
+            IRestRequest request = new RestRequest()
+            {
+                Resource = postUrl
+            };
+
+            request.AddHeader("Content-Type", "application/xml");
+            request.AddHeader("Accept", "application/xml");
+            request.AddParameter("XmlBody", xmlData, ParameterType.RequestBody);
+
+            IRestResponse<Laptop> response = client.Post<Laptop>(request);
+
+            Assert.Equal(200, (int)response.StatusCode);
+            Assert.NotNull(response.Data);
+        }
+
+        [Fact]
+        public void TestPostWithXmlComplexPayload()
+        {
+            int id = random.Next(1000);
+            string xmlData =
+                    "<Laptop>" +
+                                              "<BrandName>Alienware</BrandName>" +
+                                                "<Features>" +
+                                                   "<Feature>8th Generation Intel® Core™ i5 - 8300H</Feature>" +
+                                                   "<Feature>Windows 10 Home 64 - bit English</Feature>" +
+                                                   "<Feature>NVIDIA® GeForce® GTX 1660 Ti 6GB GDDR6</Feature>" +
+                                                   "<Feature>8GB, 2x4GB, DDR4, 2666MHz</Feature>" +
+                                                 "</Features>" +
+                                              "<Id> " + id + "</Id>" +
+                                              "<LaptopName>Alienware M17</LaptopName>" +
+                                           "</Laptop>";
+
+            IRestClient client = new RestClient();
+            IRestRequest request = new RestRequest()
+            {
+                Resource = postUrl
+            };
+
+            request.AddHeader("Content-Type", "application/xml");
+            request.AddHeader("Accept", "application/xml");
+            request.AddXmlBody(GetLaptopObject());
+
+            IRestResponse<Laptop> response = client.Post<Laptop>(request);
+
+            Assert.Equal(200, (int)response.StatusCode);
+            Assert.NotNull(response.Data);
+        }
+
+        [Fact]
+        public void TestPostWithXmlHelperClass()
+        {
+            Dictionary<string, string> headers = new Dictionary<string, string>()
+            {
+                { "Content-Type", "application/xml"},
+                { "Accept", "application/xml"}
+            };
+
+            int id = random.Next(1000);
+
+            string xmlData = "<Laptop>" +
+                                    "<BrandName>Alienware</BrandName>" +
+                                    "<Features>" +
+                                       "<Feature>8th Generation Intel® Core™ i5 - 8300H</Feature>" +
+                                       "<Feature>Windows 10 Home 64 - bit English</Feature>" +
+                                       "<Feature>NVIDIA® GeForce® GTX 1660 Ti 6GB GDDR6</Feature>" +
+                                       "<Feature>8GB, 2x4GB, DDR4, 2666MHz</Feature>" +
+                                     "</Features>" +
+                                  "<Id> " + id + "</Id>" +
+                                  "<LaptopName>Alienware M17</LaptopName>" +
+                               "</Laptop>";
+
+            RestClientHelper helper = new RestClientHelper();
+            // IRestResponse<Laptop> response = helper.PerformPostRequest<Laptop>(postUrl, headers, GetLaptopObject(), DataFormat.Xml);
+            IRestResponse<Laptop> response = helper.PerformPostRequest<Laptop>(postUrl, headers, xmlData, DataFormat.Xml);
+
+            Assert.Equal(200, (int)response.StatusCode);
+            Assert.NotNull(response.Data);
+        }
+    }
 }

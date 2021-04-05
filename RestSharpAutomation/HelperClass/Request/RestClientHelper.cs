@@ -13,7 +13,7 @@ namespace RestSharpAutomation.HelperClass.Request
             return restClient;
         }
 
-        private IRestRequest GetRestRequest(string url, Dictionary<string, string> headers, Method method, object body)
+        private IRestRequest GetRestRequest(string url, Dictionary<string, string> headers, Method method, object body, DataFormat dataFormat)
         {
             IRestRequest restRequest = new RestRequest()
             {
@@ -30,12 +30,23 @@ namespace RestSharpAutomation.HelperClass.Request
             }
 
             if (body != null)
-            {
-                restRequest.AddJsonBody(body);
+            { 
+                switch (dataFormat)
+                {
+                    case DataFormat.Json:
+                        restRequest.AddJsonBody(body);
+                        break;
+                    case DataFormat.Xml:
+                        restRequest.XmlSerializer = new RestSharp.Serializers.DotNetXmlSerializer();
+                        restRequest.AddParameter("xmlData", body.GetType().Equals(typeof(string)) ? body :
+                            restRequest.XmlSerializer.Serialize(body), ParameterType.RequestBody);
+                        break;
+                }
+
             }
 
 
-                return restRequest;
+            return restRequest;
         }
 
         private IRestResponse SendRequest(IRestRequest restRequest)
@@ -62,7 +73,7 @@ namespace RestSharpAutomation.HelperClass.Request
 
         public IRestResponse PerformGetRequest(string url, Dictionary <string,string> headers)
         {
-            IRestRequest restRequest = GetRestRequest(url, headers, Method.GET, null);
+            IRestRequest restRequest = GetRestRequest(url, headers, Method.GET, null, DataFormat.None);
             IRestResponse restResponse = SendRequest(restRequest);
 
             return restResponse;
@@ -70,22 +81,22 @@ namespace RestSharpAutomation.HelperClass.Request
 
         public IRestResponse<T> PerformGetRequest<T>(string url, Dictionary<string, string> headers) where T: new()
         {
-            IRestRequest restRequest = GetRestRequest(url, headers, Method.GET, null);
+            IRestRequest restRequest = GetRestRequest(url, headers, Method.GET, null, DataFormat.None);
             IRestResponse<T> restResponse = SendRequest<T>(restRequest);
 
             return restResponse;
         } 
-        public IRestResponse PerformPostRequest(string url, Dictionary<string, string> headers, object body)
+        public IRestResponse PerformPostRequest(string url, Dictionary<string, string> headers, object body, DataFormat dataFormat)
         {
-            IRestRequest restRequest = GetRestRequest(url, headers, Method.POST, body);
+            IRestRequest restRequest = GetRestRequest(url, headers, Method.POST, body, dataFormat);
             IRestResponse restResponse = SendRequest(restRequest);
 
             return restResponse;
         }
 
-        public IRestResponse<T> PerformPostRequest<T>(string url, Dictionary<string, string> headers, object body) where T : new()
+        public IRestResponse<T> PerformPostRequest<T>(string url, Dictionary<string, string> headers, object body, DataFormat dataFormat) where T : new()
         {
-            IRestRequest restRequest = GetRestRequest(url, headers, Method.POST, body);
+            IRestRequest restRequest = GetRestRequest(url, headers, Method.POST, body, dataFormat);
             IRestResponse<T> restResponse = SendRequest<T>(restRequest);
             
             return restResponse;

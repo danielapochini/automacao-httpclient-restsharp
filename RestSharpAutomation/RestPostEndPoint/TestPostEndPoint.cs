@@ -1,4 +1,5 @@
 ﻿using RestSharp;
+using RestSharpAutomation.HelperClass.Request;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -81,6 +82,22 @@ namespace RestSharpAutomation.RestPostEndPoint
             IRestResponse response = restClient.Post(request);
             Assert.Equal(200, (int)response.StatusCode);
             Console.WriteLine(response.Content);
+        }
+
+        [Fact]
+        public void TestPostWithModelObjectHelperClass()
+        { 
+            RestClientHelper restClientHelper = new RestClientHelper();   
+            Dictionary<string, string> headers = new Dictionary<string, string>()
+            {
+                { "Accept", "application/json" },
+                { "Content-Type", "application/json" }
+            };
+
+            IRestResponse<Laptop> restResponse = restClientHelper.PerformPostRequest<Laptop>(postUrl, headers, GetLaptopObject());
+
+            Assert.Equal(200, (int)restResponse.StatusCode);
+            Assert.NotNull(restResponse.Data);
         }
     } 
 }

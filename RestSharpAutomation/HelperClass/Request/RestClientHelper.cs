@@ -62,7 +62,7 @@ namespace RestSharpAutomation.HelperClass.Request
 
         public IRestResponse PerformGetRequest(string url, Dictionary <string,string> headers)
         {
-            IRestRequest restRequest = GetRestRequest(url, headers, Method.GET);
+            IRestRequest restRequest = GetRestRequest(url, headers, Method.GET, null);
             IRestResponse restResponse = SendRequest(restRequest);
 
             return restResponse;
@@ -70,8 +70,15 @@ namespace RestSharpAutomation.HelperClass.Request
 
         public IRestResponse<T> PerformGetRequest<T>(string url, Dictionary<string, string> headers) where T: new()
         {
-            IRestRequest restRequest = GetRestRequest(url, headers, Method.GET);
+            IRestRequest restRequest = GetRestRequest(url, headers, Method.GET, null);
             IRestResponse<T> restResponse = SendRequest<T>(restRequest);
+
+            return restResponse;
+        } 
+        public IRestResponse PerformPostRequest(string url, Dictionary<string, string> headers, object body)
+        {
+            IRestRequest restRequest = GetRestRequest(url, headers, Method.POST, body);
+            IRestResponse restResponse = SendRequest(restRequest);
 
             return restResponse;
         }
@@ -83,5 +90,7 @@ namespace RestSharpAutomation.HelperClass.Request
             
             return restResponse;
         }
+
+       
     }
 }

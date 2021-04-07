@@ -116,5 +116,11 @@ namespace RestSharpAutomation.HelperClass.Request
             return restResponse;
         }
 
+        public IRestResponse PerformDeleteRequest(string url, Dictionary<string, string> headers)
+        {
+            IRestRequest restRequest = GetRestRequest(url, headers, Method.DELETE, null, DataFormat.None);
+            IRestResponse restResponse = SendRequest(restRequest);
+            return restResponse;
+        }
     }
 }

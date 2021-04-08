@@ -1,4 +1,5 @@
 ﻿using RestSharp;
+using RestSharp.Authenticators;
 using RestSharpAutomation.HelperClass.Request;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,9 @@ namespace RestSharpAutomation.RestGetEndPoint
         }
          
         private string getUrl = "http://localhost:8080/laptop-bag/webapi/api/all";
-         
+        private string secureGetUrl = "http://localhost:8080/laptop-bag/webapi/secure/all";
+
+
         [Fact]
         public void TestGetUsingRestSharp()
         {
@@ -213,6 +216,21 @@ namespace RestSharpAutomation.RestGetEndPoint
 
             Assert.Equal(200, (int)restResponse.StatusCode);
             Assert.NotNull(restResponse.Data);
+        }
+
+        [Fact]
+        public void TestSecureGet()
+        {
+            IRestClient client = new RestClient(); 
+            IRestRequest request = new RestRequest()
+            {
+                Resource = secureGetUrl
+            };
+
+            client.Authenticator = new HttpBasicAuthenticator("admin", "welcome");
+
+            IRestResponse response = client.Get(request);
+            Assert.Equal(200, (int)response.StatusCode);
         }
     }
 }

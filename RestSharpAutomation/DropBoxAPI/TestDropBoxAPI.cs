@@ -12,7 +12,7 @@ namespace RestSharpAutomation.DropBoxAPI
     {
         private const string ListEndPointUrl = "https://api.dropboxapi.com/2/files/list_folder";
         private const string CreateEndPointUrl = "https://api.dropboxapi.com/2/files/create_folder_v2";
-        private const string DownloadEndPointUrl = "https://api.dropboxapi.com/2/files/download";
+        private const string DownloadEndPointUrl = "https://content.dropboxapi.com/2/files/download";
         private const string AccessToken = "sl.AuiwF3GMcYFZyiOSmW9JTBYEJjXWrSon03fP1v9oY3TcJJA3tV9e-QVLZp025iFiytb6KLU7vIxwfCV6ZE3rNlsnM2Co53lo9ArZiO4sSwlKL8GKdS1U30erZ6Mq46xjWD1jx5aaYz8";
 
         [Fact]

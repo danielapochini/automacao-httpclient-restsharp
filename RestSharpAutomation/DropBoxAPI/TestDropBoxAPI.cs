@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace RestSharpAutomation.DropBoxAPI
@@ -73,5 +74,52 @@ namespace RestSharpAutomation.DropBoxAPI
             File.WriteAllBytes("Test.xlsx", dataInByte);
 
         }
+
+        [Fact]
+        public void TestFileDownloadParaller()
+        {
+            string locationOfFile1 = "{\"path\": \"/File1.docx\"}";
+            string locationOfFile2 = "{\"path\": \"/File2.docx\"}";
+
+            IRestRequest file1 = new RestRequest()
+            {
+                Resource = DownloadEndPointUrl
+            };
+            file1.AddHeader("Authorization", "Bearer " + AccessToken);
+            file1.AddHeader("Dropbox-API-Arg", locationOfFile1);
+
+            IRestRequest file2 = new RestRequest()
+            {
+                Resource = DownloadEndPointUrl
+            };
+            file2.AddHeader("Authorization", "Bearer " + AccessToken);
+            file2.AddHeader("Dropbox-API-Arg", locationOfFile2);
+
+
+            IRestClient client = new RestClient();
+
+            byte[] downloadDataFile1 = null;
+            byte[] downloadDataFile2 = null;
+
+            var task1 = Task.Factory.StartNew(() =>
+            {
+                downloadDataFile1 = client.DownloadData(file1);
+            });
+
+            var task2 = Task.Factory.StartNew(() =>
+            {
+                downloadDataFile2 = client.DownloadData(file2);
+            });
+
+            task1.Wait();
+            task2.Wait();
+
+            if (null != downloadDataFile1)
+                File.WriteAllBytes("File1.docx", downloadDataFile1);
+            if (null != downloadDataFile2)
+                File.WriteAllBytes("File2.docx", downloadDataFile2);
+
+        }
+
     }
 }

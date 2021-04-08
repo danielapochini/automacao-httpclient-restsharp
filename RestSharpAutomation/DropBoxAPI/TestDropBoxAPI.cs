@@ -10,8 +10,9 @@ namespace RestSharpAutomation.DropBoxAPI
     public class TestDropBoxAPI
     {
         private const string ListEndPointUrl = "https://api.dropboxapi.com/2/files/list_folder";
+        private const string CreateEndPointUrl = "https://api.dropboxapi.com/2/files/create_folder_v2";
         private const string AccessToken = "sl.AuiwF3GMcYFZyiOSmW9JTBYEJjXWrSon03fP1v9oY3TcJJA3tV9e-QVLZp025iFiytb6KLU7vIxwfCV6ZE3rNlsnM2Co53lo9ArZiO4sSwlKL8GKdS1U30erZ6Mq46xjWD1jx5aaYz8";
-       
+
         [Fact]
         public void TestListFolder()
         {
@@ -32,6 +33,24 @@ namespace RestSharpAutomation.DropBoxAPI
 
             IRestResponse<RootObject> response = client.Post<RootObject>(request);
 
+            Assert.Equal(200, (int)response.StatusCode);
+        }
+
+        [Fact]
+        public void TestCreateFolder()
+        {
+            string body = "{\"path\": \"/TestFolder\",\"autorename\": true}";
+            IRestClient client = new RestClient();
+            IRestRequest request = new RestRequest()
+            {
+                Resource = CreateEndPointUrl
+            };
+
+            request.AddHeader("Authorization", "Bearer " + AccessToken);
+            request.AddHeader("Content-Type", "application/json");
+            request.AddJsonBody(body);
+
+            var response = client.Post(request);
             Assert.Equal(200, (int)response.StatusCode);
         }
     }
